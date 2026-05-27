@@ -437,7 +437,10 @@ footer{background:var(--ink);color:rgba(255,255,255,.6);padding:52px 24px 0}
         <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         <span class="cart-dot" id="cart-badge" style="display:none">0</span>
       </button>
-      <button class="admin-pill" onclick="openAdmin()">Admin</button>
+      <!-- Auth Button — changes based on login state -->
+      <div id="nav-auth-area">
+        <button class="admin-pill" onclick="showScreen('screen-login')" id="nav-login-btn">Login</button>
+      </div>
     </div>
   </div>
 </nav>
@@ -479,7 +482,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.6);padding:52px 24px 0}
         <div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
         <h3 class="empty-h">No Products Yet</h3>
         <p class="empty-p">Go to Admin Panel, upload your first product<br>and it will appear here instantly!</p>
-        <button class="btn-black" onclick="openAdmin()">Upload First Product</button>
+        <button class="btn-black" onclick="showScreen('screen-admin-login')">Upload First Product</button>
       </div>
       <div class="pgrid" id="pgrid"></div>
     </div>
@@ -574,6 +577,147 @@ footer{background:var(--ink);color:rgba(255,255,255,.6);padding:52px 24px 0}
 </div>
 
 <!-- ADMIN SCREEN -->
+<!-- ══════════════════════ LOGIN SCREEN ══════════════════════ -->
+<div id="screen-login" class="screen">
+  <div style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:40px 16px;background:var(--mist)">
+    <div style="width:100%;max-width:440px">
+      <!-- Logo -->
+      <div style="text-align:center;margin-bottom:32px">
+        <div style="font-family:var(--serif);font-size:32px;font-weight:400;letter-spacing:5px">NIDA</div>
+        <div style="font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);font-weight:500">Collection</div>
+      </div>
+      <!-- Card -->
+      <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:36px 32px">
+        <!-- Tabs -->
+        <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:28px">
+          <button id="tab-login" onclick="switchAuthTab('login')" style="flex:1;padding:10px;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:500;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--gold);color:var(--black);font-family:var(--sans)">Login</button>
+          <button id="tab-signup" onclick="switchAuthTab('signup')" style="flex:1;padding:10px;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:500;border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;color:#aaa;font-family:var(--sans)">Register</button>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div id="auth-login-form">
+          <div style="margin-bottom:16px">
+            <label style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;color:var(--ash);margin-bottom:7px">Email Address</label>
+            <input id="login-email" type="email" placeholder="yourname@email.com" style="width:100%;padding:12px 14px;border:1px solid var(--border);background:var(--warm);font-size:13px;border-radius:2px;font-family:var(--sans);outline:none">
+          </div>
+          <div style="margin-bottom:24px">
+            <label style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;color:var(--ash);margin-bottom:7px">Password</label>
+            <input id="login-pass" type="password" placeholder="••••••••" style="width:100%;padding:12px 14px;border:1px solid var(--border);background:var(--warm);font-size:13px;border-radius:2px;font-family:var(--sans);outline:none">
+          </div>
+          <button onclick="doLogin()" style="width:100%;background:var(--black);color:white;padding:14px;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:500;border:none;border-radius:2px;cursor:pointer;font-family:var(--sans);transition:.2s" onmouseover="this.style.background='var(--gold)'" onmouseout="this.style.background='var(--black)'">Sign In</button>
+          <p style="text-align:center;font-size:12px;color:#aaa;margin-top:16px">Don't have an account? <button onclick="switchAuthTab('signup')" style="color:var(--gold);font-weight:500;border:none;background:none;cursor:pointer;font-family:var(--sans);font-size:12px">Register here</button></p>
+        </div>
+
+        <!-- SIGNUP FORM -->
+        <div id="auth-signup-form" style="display:none">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+            <div>
+              <label style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;color:var(--ash);margin-bottom:7px">First Name</label>
+              <input id="signup-fname" type="text" placeholder="Ayesha" style="width:100%;padding:12px 14px;border:1px solid var(--border);background:var(--warm);font-size:13px;border-radius:2px;font-family:var(--sans);outline:none">
+            </div>
+            <div>
+              <label style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;color:var(--ash);margin-bottom:7px">Last Name</label>
+              <input id="signup-lname" type="text" placeholder="Khan" style="width:100%;padding:12px 14px;border:1px solid var(--border);background:var(--warm);font-size:13px;border-radius:2px;font-family:var(--sans);outline:none">
+            </div>
+          </div>
+          <div style="margin-bottom:16px">
+            <label style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;color:var(--ash);margin-bottom:7px">Email Address</label>
+            <input id="signup-email" type="email" placeholder="yourname@email.com" style="width:100%;padding:12px 14px;border:1px solid var(--border);background:var(--warm);font-size:13px;border-radius:2px;font-family:var(--sans);outline:none">
+          </div>
+          <div style="margin-bottom:16px">
+            <label style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;color:var(--ash);margin-bottom:7px">Phone Number</label>
+            <input id="signup-phone" type="tel" placeholder="03xx-xxxxxxx" style="width:100%;padding:12px 14px;border:1px solid var(--border);background:var(--warm);font-size:13px;border-radius:2px;font-family:var(--sans);outline:none">
+          </div>
+          <div style="margin-bottom:24px">
+            <label style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;color:var(--ash);margin-bottom:7px">Password</label>
+            <input id="signup-pass" type="password" placeholder="Min 6 characters" style="width:100%;padding:12px 14px;border:1px solid var(--border);background:var(--warm);font-size:13px;border-radius:2px;font-family:var(--sans);outline:none">
+          </div>
+          <button onclick="doSignup()" style="width:100%;background:var(--black);color:white;padding:14px;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:500;border:none;border-radius:2px;cursor:pointer;font-family:var(--sans);transition:.2s" onmouseover="this.style.background='var(--gold)'" onmouseout="this.style.background='var(--black)'">Create Account</button>
+          <p style="text-align:center;font-size:12px;color:#aaa;margin-top:16px">Already have an account? <button onclick="switchAuthTab('login')" style="color:var(--gold);font-weight:500;border:none;background:none;cursor:pointer;font-family:var(--sans);font-size:12px">Login here</button></p>
+        </div>
+      </div>
+      <p style="text-align:center;margin-top:16px"><button onclick="goHome()" style="font-size:12px;color:#aaa;border:none;background:none;cursor:pointer;font-family:var(--sans)">← Continue as Guest</button></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ ACCOUNT DASHBOARD SCREEN ══════════════════════ -->
+<div id="screen-account" class="screen">
+  <div style="max-width:900px;margin:0 auto;padding:48px 24px">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;flex-wrap:wrap;gap:12px">
+      <div style="display:flex;align-items:center;gap:16px">
+        <div id="acc-avatar" style="width:56px;height:56px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:22px;color:white;font-weight:400">A</div>
+        <div>
+          <div id="acc-name" style="font-family:var(--serif);font-size:24px;font-weight:400">Welcome!</div>
+          <div id="acc-email" style="font-size:12px;color:#aaa;margin-top:2px">user@email.com</div>
+        </div>
+      </div>
+      <button onclick="doLogout()" style="padding:10px 22px;border:1.5px solid var(--border);background:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:var(--sans);border-radius:2px;color:var(--ash)" onmouseover="this.style.borderColor='#c62828';this.style.color='#c62828'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ash)'">Logout</button>
+    </div>
+
+    <!-- My Orders -->
+    <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:28px;margin-bottom:20px">
+      <h3 style="font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)">My Orders</h3>
+      <div id="my-orders-list">
+        <div style="text-align:center;padding:40px 0;color:#bbb">
+          <div style="font-size:40px;margin-bottom:12px">📦</div>
+          <p style="font-family:var(--serif);font-size:18px;font-weight:300">No orders yet</p>
+          <p style="font-size:13px;margin-top:8px">Your orders will appear here after purchase</p>
+          <button onclick="goHome()" style="margin-top:20px;background:var(--black);color:white;padding:12px 28px;border:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:var(--sans);border-radius:2px">Shop Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Info -->
+    <div style="background:white;border:1px solid var(--border);border-radius:8px;padding:28px">
+      <h3 style="font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)">My Profile</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <label style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;color:var(--ash);margin-bottom:7px">Full Name</label>
+          <input id="prof-name" type="text" style="width:100%;padding:12px 14px;border:1px solid var(--border);background:var(--warm);font-size:13px;border-radius:2px;font-family:var(--sans);outline:none">
+        </div>
+        <div>
+          <label style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;color:var(--ash);margin-bottom:7px">Phone</label>
+          <input id="prof-phone" type="tel" style="width:100%;padding:12px 14px;border:1px solid var(--border);background:var(--warm);font-size:13px;border-radius:2px;font-family:var(--sans);outline:none">
+        </div>
+        <div style="grid-column:1/-1">
+          <label style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;color:var(--ash);margin-bottom:7px">Email</label>
+          <input id="prof-email" type="email" disabled style="width:100%;padding:12px 14px;border:1px solid var(--border);background:var(--mist);font-size:13px;border-radius:2px;font-family:var(--sans);color:#999">
+        </div>
+      </div>
+      <button onclick="saveProfile()" style="margin-top:20px;background:var(--black);color:white;padding:12px 28px;border:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:var(--sans);border-radius:2px" onmouseover="this.style.background='var(--gold)'" onmouseout="this.style.background='var(--black)'">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ ADMIN LOGIN SCREEN ══════════════════════ -->
+<div id="screen-admin-login" class="screen">
+  <div style="min-height:80vh;display:flex;align-items:center;justify-content:center;padding:40px 16px;background:var(--ink)">
+    <div style="width:100%;max-width:380px">
+      <div style="text-align:center;margin-bottom:32px">
+        <div style="font-family:var(--serif);font-size:32px;font-weight:400;letter-spacing:5px;color:white">NIDA</div>
+        <div style="font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);font-weight:500">Admin Access</div>
+      </div>
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:36px 32px">
+        <div style="text-align:center;margin-bottom:24px">
+          <div style="width:52px;height:52px;border-radius:50%;background:rgba(184,156,94,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <p style="font-size:13px;color:rgba(255,255,255,.5)">Admin area — authorized access only</p>
+        </div>
+        <div style="margin-bottom:16px">
+          <label style="display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;color:rgba(255,255,255,.4);margin-bottom:7px">Admin Password</label>
+          <input id="admin-pass-input" type="password" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doAdminLogin()" style="width:100%;padding:12px 14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.07);font-size:13px;border-radius:2px;font-family:var(--sans);outline:none;color:white">
+        </div>
+        <button onclick="doAdminLogin()" style="width:100%;background:var(--gold);color:white;padding:14px;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:500;border:none;border-radius:2px;cursor:pointer;font-family:var(--sans);margin-bottom:12px" onmouseover="this.style.background='var(--gold-lt)'" onmouseout="this.style.background='var(--gold)'">Access Dashboard</button>
+        <button onclick="goHome()" style="width:100%;background:transparent;color:rgba(255,255,255,.3);padding:10px;font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:500;border:1px solid rgba(255,255,255,.1);border-radius:2px;cursor:pointer;font-family:var(--sans)">← Back to Store</button>
+        <p style="text-align:center;font-size:11px;color:rgba(255,255,255,.2);margin-top:16px">Hint: nida2025admin</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="screen-admin" class="screen">
   <div class="admin-wrap">
     <div class="admin-head">
@@ -808,7 +952,7 @@ footer{background:var(--ink);color:rgba(255,255,255,.6);padding:52px 24px 0}
     <div class="mob-link" onclick="filterProducts('luxury',{preventDefault:()=>{}});goShop();closeMob()">Luxury Formal</div>
     <div class="mob-link" onclick="filterProducts('kids',{preventDefault:()=>{}});goShop();closeMob()">Kids Wear</div>
     <div class="mob-link" onclick="openCart();closeMob()">🛒 Cart</div>
-    <div class="mob-link" onclick="openAdmin();closeMob()">⚙️ Admin</div>
+    <div class="mob-link" id="mob-auth-link" onclick="showScreen('screen-login');closeMob()">👤 Login / Register</div>
   </div>
 </div>
 
@@ -1335,9 +1479,174 @@ function showToast(msg){ const t=document.getElementById('toast'); document.getE
 document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeCart(); closePreviewModal(); closeMob(); } });
 
 // ══════════════════════════════════════════════════════
+// AUTH SYSTEM
+// ══════════════════════════════════════════════════════
+const ADMIN_PASSWORD = 'nida2025admin';
+let currentUser = JSON.parse(localStorage.getItem('nc_user') || 'null');
+
+function updateNavAuth() {
+  const area = document.getElementById('nav-auth-area');
+  const mobLink = document.getElementById('mob-auth-link');
+  if (currentUser) {
+    const initials = (currentUser.fname[0] || 'U').toUpperCase();
+    area.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px">
+        <button onclick="openAccount()" style="width:36px;height:36px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;font-family:var(--serif);font-size:16px;color:white;font-weight:400">${initials}</button>
+      </div>`;
+    if (mobLink) mobLink.textContent = '👤 My Account';
+    if (mobLink) mobLink.onclick = () => { openAccount(); closeMob(); };
+  } else {
+    area.innerHTML = `<button class="admin-pill" onclick="showScreen('screen-login')" style="background:var(--black);color:white;padding:8px 18px;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:500;border-radius:2px;border:none;cursor:pointer">Login</button>`;
+    if (mobLink) mobLink.textContent = '👤 Login / Register';
+    if (mobLink) mobLink.onclick = () => { showScreen('screen-login'); closeMob(); };
+  }
+}
+
+function switchAuthTab(tab) {
+  const loginForm = document.getElementById('auth-login-form');
+  const signupForm = document.getElementById('auth-signup-form');
+  const tabLogin = document.getElementById('tab-login');
+  const tabSignup = document.getElementById('tab-signup');
+  if (tab === 'login') {
+    loginForm.style.display = 'block';
+    signupForm.style.display = 'none';
+    tabLogin.style.borderBottomColor = 'var(--gold)';
+    tabLogin.style.color = 'var(--black)';
+    tabSignup.style.borderBottomColor = 'transparent';
+    tabSignup.style.color = '#aaa';
+  } else {
+    loginForm.style.display = 'none';
+    signupForm.style.display = 'block';
+    tabSignup.style.borderBottomColor = 'var(--gold)';
+    tabSignup.style.color = 'var(--black)';
+    tabLogin.style.borderBottomColor = 'transparent';
+    tabLogin.style.color = '#aaa';
+  }
+}
+
+function doSignup() {
+  const fname = document.getElementById('signup-fname').value.trim();
+  const lname = document.getElementById('signup-lname').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const phone = document.getElementById('signup-phone').value.trim();
+  const pass  = document.getElementById('signup-pass').value;
+  if (!fname || !email || !pass) { showToast('Please fill all required fields'); return; }
+  if (pass.length < 6) { showToast('Password must be at least 6 characters'); return; }
+
+  // Check if email already registered
+  const users = JSON.parse(localStorage.getItem('nc_users') || '[]');
+  if (users.find(u => u.email === email)) { showToast('Email already registered — please login'); return; }
+
+  const newUser = { fname, lname, email, phone, pass, createdAt: new Date().toISOString() };
+  users.push(newUser);
+  localStorage.setItem('nc_users', JSON.stringify(users));
+
+  // Auto login
+  currentUser = newUser;
+  localStorage.setItem('nc_user', JSON.stringify(currentUser));
+  updateNavAuth();
+  showToast('Account created! Welcome ' + fname + '!');
+  openAccount();
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  if (!email || !pass) { showToast('Please enter email and password'); return; }
+
+  const users = JSON.parse(localStorage.getItem('nc_users') || '[]');
+  const user = users.find(u => u.email === email && u.pass === pass);
+  if (!user) { showToast('Invalid email or password'); return; }
+
+  currentUser = user;
+  localStorage.setItem('nc_user', JSON.stringify(currentUser));
+  updateNavAuth();
+  showToast('Welcome back, ' + user.fname + '!');
+  openAccount();
+}
+
+function doLogout() {
+  currentUser = null;
+  localStorage.removeItem('nc_user');
+  updateNavAuth();
+  showToast('Logged out successfully');
+  goHome();
+}
+
+function openAccount() {
+  if (!currentUser) { showScreen('screen-login'); return; }
+  // Fill profile fields
+  document.getElementById('acc-name').textContent = 'Welcome, ' + currentUser.fname + '!';
+  document.getElementById('acc-email').textContent = currentUser.email;
+  document.getElementById('acc-avatar').textContent = (currentUser.fname[0] || 'U').toUpperCase();
+  document.getElementById('prof-name').value  = (currentUser.fname + ' ' + currentUser.lname).trim();
+  document.getElementById('prof-phone').value = currentUser.phone || '';
+  document.getElementById('prof-email').value = currentUser.email;
+
+  // Load user orders
+  const myOrders = orders.filter(o => o.email === currentUser.email || o.phone === currentUser.phone);
+  const ordersList = document.getElementById('my-orders-list');
+  if (myOrders.length) {
+    ordersList.innerHTML = myOrders.map(o => `
+      <div style="border:1px solid var(--border);border-radius:4px;padding:16px 20px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-weight:500;font-size:13px;margin-bottom:4px">Order #${o.id}</div>
+          <div style="font-size:12px;color:#aaa">${o.date} · ${o.items.length} item(s)</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:14px;font-weight:500;color:var(--black)">Rs. ${Number(o.total).toLocaleString()}</div>
+          <span style="font-size:10px;padding:3px 10px;border-radius:12px;font-weight:500;background:#e8f5e9;color:#2e7d32">${o.status || 'Confirmed'}</span>
+        </div>
+      </div>`).join('');
+  } else {
+    ordersList.innerHTML = `<div style="text-align:center;padding:40px 0;color:#bbb"><div style="font-size:40px;margin-bottom:12px">📦</div><p style="font-family:var(--serif);font-size:18px;font-weight:300">No orders yet</p><button onclick="goHome()" style="margin-top:20px;background:var(--black);color:white;padding:12px 28px;border:none;font-size:11px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:var(--sans);border-radius:2px">Shop Now</button></div>`;
+  }
+  showScreen('screen-account');
+}
+
+function saveProfile() {
+  if (!currentUser) return;
+  const nameParts = document.getElementById('prof-name').value.trim().split(' ');
+  currentUser.fname = nameParts[0] || currentUser.fname;
+  currentUser.lname = nameParts.slice(1).join(' ') || currentUser.lname;
+  currentUser.phone = document.getElementById('prof-phone').value.trim();
+  localStorage.setItem('nc_user', JSON.stringify(currentUser));
+
+  // Update in users list too
+  const users = JSON.parse(localStorage.getItem('nc_users') || '[]');
+  const idx = users.findIndex(u => u.email === currentUser.email);
+  if (idx > -1) { users[idx] = { ...users[idx], ...currentUser }; localStorage.setItem('nc_users', JSON.stringify(users)); }
+  updateNavAuth();
+  showToast('Profile updated!');
+}
+
+// ── ADMIN LOGIN ──
+function doAdminLogin() {
+  const pass = document.getElementById('admin-pass-input').value;
+  if (pass === ADMIN_PASSWORD) {
+    localStorage.setItem('nc_admin_auth', 'true');
+    document.getElementById('admin-pass-input').value = '';
+    renderAdminProducts(); renderAdminOrders();
+    showScreen('screen-admin');
+    showToast('Welcome to Admin Dashboard!');
+  } else {
+    showToast('Incorrect password — try again');
+    document.getElementById('admin-pass-input').value = '';
+    document.getElementById('admin-pass-input').focus();
+  }
+}
+
+function openAdmin() {
+  const isAuth = localStorage.getItem('nc_admin_auth');
+  if (isAuth) { renderAdminProducts(); renderAdminOrders(); showScreen('screen-admin'); }
+  else { showScreen('screen-admin-login'); }
+}
+
+// ══════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════
 renderStorefront();
+updateNavAuth();
 </script>
 </body>
 </html>
